@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendrier de l'Avent</title>
+<style>html,body{margin:0;background:#1b2748}#avent-cal{border-radius:0!important;min-height:100vh}</style>
+</head>
+<body>
+<!-- ===== CALENDRIER DE L'AVENT – à coller dans un bloc HTML ===== -->
+<div id="avent-cal">
+<style>
+#avent-cal{--nuit:#1b2748;--or:#f0b93f;--or-pale:#ffe6a6;--neige:#f5f3ee;--ombre:#2c3a63;
+  background:var(--nuit);color:var(--neige);padding:28px 16px 32px;border-radius:14px;
+  font-family:Georgia,"Times New Roman",serif;line-height:1.5;box-sizing:border-box}
+#avent-cal *{box-sizing:border-box}
+#avent-cal h2{margin:0 0 4px;text-align:center;font-size:clamp(1.6rem,4vw,2.3rem);font-weight:normal;color:var(--or-pale)}
+#avent-cal .sous{text-align:center;margin:0 auto 22px;max-width:560px;font-size:.98rem;opacity:.9}
+#avent-cal .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px;max-width:760px;margin:0 auto}
+#avent-cal button.case{aspect-ratio:1;border-radius:50%;border:2px solid var(--or);background:var(--ombre);color:var(--neige);
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:inherit;padding:4px}
+#avent-cal .case b{font-size:1.7rem;font-weight:normal;line-height:1}
+#avent-cal .case small{font-size:.72rem;opacity:.85}
+#avent-cal .case.ouvert{background:var(--or);color:var(--nuit);box-shadow:0 0 14px rgba(240,185,63,.55)}
+#avent-cal .case.vu{background:#7a6a3a;color:var(--neige);box-shadow:none}
+#avent-cal .case.dimanche{border-width:4px;border-style:double}
+#avent-cal .case.ferme{border-style:dashed;border-color:#6d7aa3;opacity:.6;cursor:not-allowed}
+#avent-cal .case:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#avent-cal .fond{position:fixed;inset:0;background:rgba(10,16,35,.82);display:none;align-items:center;justify-content:center;padding:16px;z-index:99999}
+#avent-cal .fond.on{display:flex}
+#avent-cal .carte{position:relative;background:#fff;color:#222;max-width:980px;width:100%;max-height:92vh;overflow:auto;border-radius:12px;padding:16px 24px 24px;font-family:"Segoe UI",Helvetica,Arial,sans-serif}
+#avent-cal .carte .cat{margin:0 0 8px;padding-right:80px;font-size:1.6rem;font-weight:700;color:#8a66cf}
+#avent-cal .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+#avent-cal .carte h3{margin:8px 0 6px;font-size:1.6rem;color:#3a3a45}
+#avent-cal .carte .date{margin:0 0 12px;color:#777;font-size:.85rem}
+#avent-cal .carte p{margin:0 0 12px;font-size:1.05rem;white-space:pre-line}
+#avent-cal .carte .prie{margin-top:22px}
+#avent-cal .carte .prie p{font-size:.95rem}
+#avent-cal .carte img{width:100%;height:auto;border-radius:6px;display:block;margin-bottom:16px}
+#avent-cal .fermer{position:absolute;top:14px;right:14px;border:0;background:var(--nuit);color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit}
+@media(max-width:680px){#avent-cal .cols{grid-template-columns:1fr}}
+</style>
+
+<h2>En chemin vers Noël</h2>
+<p class="sous">Chaque case s'ouvre 3 jours avant sa date. Touchez une lumière pour découvrir le défi du jour.</p>
+<div class="grille" id="avent-grille"></div>
+
+<div class="fond" id="avent-fond" role="dialog" aria-modal="true" aria-labelledby="avent-titre">
+  <div class="carte">
+    <button class="fermer" id="avent-fermer">Fermer</button>
+    <p class="cat" id="avent-cat"></p>
+    <div class="cols">
+      <div>
+        <h3 id="avent-titre"></h3><p class="date" id="avent-date"></p>
+        <p id="avent-texte"></p>
+        <div class="prie" id="avent-blocprie">
+          <p>🙏 Prière d'Introduction Quotidienne<br><em>(À lire chaque jour avant de découvrir le défi)</em></p>
+          <p id="avent-prie"></p>
+        </div>
+      </div>
+      <div><img id="avent-img" alt="" hidden><p id="avent-prierejour"></p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ---------- RÉGLAGES ---------- */
+  var DEBUT = "2026-11-28", FIN = "2026-12-27"; // première et dernière case
+  var AVANCE_JOURS = 3;                          // ouverture x jours avant la date
+  var PRIERE = "Seigneur Jésus, en ce temps de l'Avent, éclaire nos pas et ouvre nos cœurs. Merci pour notre Ange Gardien. Aide-nous à accomplir ce petit geste qui nous prépare à Ta venue. Amen.";
+
+  /* ---------- CONTENUS : une entrée par date (AAAA-MM-JJ) ---------- */
+  /* Champs : cat = titre du haut (facultatif, "Les Défis de l'Ange" par défaut)
+              t = titre du défi, x = texte du défi, p = prière du jour (sous l'image)
+              img = adresse de l'image (facultatif), sansPriere:true = masque la prière quotidienne
+     Les retours à la ligne s'écrivent \n */
+  var CONTENU = {
+    "2026-11-29": {cat:"1er dimanche de l'Avent", t:"Tenez-vous prêts !", sansPriere:true,
+      x:"« Restez éveillés, tenez-vous prêts » (Mt 24, 37-44)\n\nEt toi, quelles sont les étoiles qui brillent dans ta vie ?"},
+    "2026-12-03": {t:"Habiller ou couvrir ton ange :", x:"Donne à ton ange un petit morceau de tissu ou de laine.",
+      img:"", // collez ici l'adresse de l'image téléversée dans votre CMS
+      p:"« Seigneur, cet ange est couvert,\nnous Te prions pour ceux qui n'ont pas de toit ni de quoi se couvrir.\nRéchauffe leur cœur et inspire-nous à les aider. »"},
+    "2026-12-01": {t:"J'ouvre mon cœur", x:"Mets un message gentil sous l'oreiller d'un membre de ta famille.\n\nNous prenons peu souvent le temps de dire des mots qui comptent à ceux qu'on aime."}
+    /* ajoutez ici : "2026-12-04": {t:"Titre", x:"Texte du défi", p:"Prière du jour", img:"adresse"}, */
+  };
+  var PAR_DEFAUT = {t:"Défi de l'Ange", x:"Le contenu de cette case sera bientôt ajouté."};
+  var SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQH7onzvrhlcwGkBO3i4rVrLcWSvPLqjiZoAzKT9VgHaS0r47pi6AYHaytNvDgGwJ5lwBYZrI0Py-mA/pub?gid=1148585544&single=true&output=csv"; // adresse CSV du Google Sheet publié (voir explications). Vide = on utilise CONTENU ci-dessus.
+
+  /* ---------- OUTIL DE TEST : ajoutez ?test=2026-12-05 à l'adresse de la page ---------- */
+  var m = /[?&]test=(\d{4})-(\d{2})-(\d{2})/.exec(location.search);
+  var auj = m ? new Date(+m[1], m[2]-1, +m[3]) : new Date();
+  auj = new Date(auj.getFullYear(), auj.getMonth(), auj.getDate());
+
+  function d(iso){ var p = iso.split("-"); return new Date(+p[0], p[1]-1, +p[2]); }
+  function iso(dt){ return dt.getFullYear()+"-"+("0"+(dt.getMonth()+1)).slice(-2)+"-"+("0"+dt.getDate()).slice(-2); }
+  var MOIS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  function lib(dt){ return dt.getDate()+" "+MOIS[dt.getMonth()]; }
+  function vus(){ try{ return JSON.parse(localStorage.getItem("avent2026")||"{}"); }catch(e){ return {}; } }
+  function marquer(k){ try{ var v=vus(); v[k]=1; localStorage.setItem("avent2026", JSON.stringify(v)); }catch(e){} }
+
+  var grille = document.getElementById("avent-grille");
+  var fond = document.getElementById("avent-fond");
+
+  function construire(){
+    grille.innerHTML = ""; var deja = vus();
+    for (var dt = d(DEBUT); dt <= d(FIN); dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()+1)){
+      (function(dt){
+        var k = iso(dt), ouv = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()-AVANCE_JOURS);
+        var ok = auj >= ouv;
+        var b = document.createElement("button"); b.type = "button";
+        b.className = "case " + (ok ? (deja[k] ? "vu" : "ouvert") : "ferme") + (dt.getDay()===0 ? " dimanche" : "");
+        b.innerHTML = "<b>"+dt.getDate()+"</b><small>"+MOIS[dt.getMonth()]+"</small>";
+        b.setAttribute("aria-label", lib(dt)+(ok ? "" : ", pas encore disponible"));
+        b.onclick = function(){ ok ? ouvrir(dt,k) : alert("Cette case s'ouvrira le "+lib(ouv)+"."); };
+        grille.appendChild(b);
+      })(dt);
+    }
+  }
+
+  function ouvrir(dt,k){
+    var c = CONTENU[k] || PAR_DEFAUT;
+    function $(id){ return document.getElementById(id); }
+    $("avent-cat").textContent = c.cat || "Les Défis de l'Ange";
+    $("avent-titre").textContent = c.t;
+    $("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+    $("avent-texte").textContent = c.x;
+    $("avent-prie").textContent = PRIERE;
+    $("avent-blocprie").style.display = c.sansPriere ? "none" : "";
+    $("avent-prierejour").textContent = c.p || "";
+    var im = $("avent-img");
+    if (c.img){ im.src = c.img; im.alt = c.t; im.hidden = false; } else { im.hidden = true; }
+    fond.classList.add("on"); document.getElementById("avent-fermer").focus();
+    marquer(k); construire();
+    // compteur : une visite par case ouverte (si GoatCounter est installé, voir plus bas)
+    try{ window.goatcounter && window.goatcounter.count({path:"avent-"+k, title:"Case "+k, event:true}); }catch(e){}
+  }
+  function fermer(){ fond.classList.remove("on"); }
+  document.getElementById("avent-fermer").onclick = fermer;
+  fond.onclick = function(e){ if(e.target===fond) fermer(); };
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape") fermer(); });
+  /* ---------- LECTURE DU GOOGLE SHEET (CSV) ---------- */
+  function csv(t){
+    var h=t.split(/\r?\n/)[0], sep=(h.split(";").length>h.split(",").length)?";":","; // ; ou , détecté sur la 1re ligne
+    var r=[], l=[], c="", q=false;
+    for (var i=0;i<t.length;i++){ var ch=t[i];
+      if (q){ if (ch=='"'){ if (t[i+1]=='"'){ c+='"'; i++; } else q=false; } else c+=ch; }
+      else if (ch=='"') q=true;
+      else if (ch==sep){ l.push(c); c=""; }
+      else if (ch=='\n' || ch=='\r'){ if (ch=='\r' && t[i+1]=='\n') i++; l.push(c); c=""; r.push(l); l=[]; }
+      else c+=ch;
+    }
+    if (c || l.length){ l.push(c); r.push(l); }
+    return r;
+  }
+  function dateIso(s){ // accepte 2026-12-03 ou 03/12/2026
+    s=(s||"").trim();
+    var a=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s), b=/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?!\d)/.exec(s);
+    if (a) return a[1]+"-"+("0"+a[2]).slice(-2)+"-"+("0"+a[3]).slice(-2);
+    if (b) return b[3]+"-"+("0"+b[2]).slice(-2)+"-"+("0"+b[1]).slice(-2);
+    return null;
+  }
+  if (SHEET_URL){
+    var url = SHEET_URL; if (!/output=csv/.test(url)) url += (url.indexOf("?")<0 ? "?" : "&") + "single=true&output=csv";
+    fetch(url).then(function(r){ return r.text(); }).then(function(t){
+      var nv={}, n=0;
+      csv(t).forEach(function(r){ var k=dateIso(r[0]); if(!k) return; n++;
+        nv[k]={cat:r[1], t:r[2], x:r[3], p:r[4], img:r[5], sansPriere:/^(oui|x|1|vrai|true)$/i.test((r[6]||"").trim())}; });
+      if (n){ CONTENU = nv; var ks = Object.keys(nv).sort(); DEBUT = ks[0]; FIN = ks[ks.length-1]; }
+    }).catch(function(){ /* en cas d'échec, on garde les contenus intégrés */ }).then(construire);
+  } else construire();
+})();
+</script>
+
+<!-- ===== COMPTEUR DE VISITES (GoatCounter, gratuit, sans cookie) =====
+     1. Créez un compte sur goatcounter.com et choisissez un code (ex. muehlgraben).
+     2. Remplacez VOTRECODE ci-dessous, puis retirez les balises de commentaire autour du script.
+<script data-goatcounter="https://VOTRECODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+-->
+</div>
+
+</body>
+</html>
