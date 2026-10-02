@@ -67,7 +67,15 @@
 (function(){
   /* ---------- RÉGLAGES ---------- */
   var DEBUT = "2026-11-27", FIN = "2026-12-27"; // première et dernière case
-  var AVANCE_JOURS = 223;                          // ouverture x jours avant la date
+  var AVANCE_JOURS = 3;                          // ouverture x jours avant la date
+  var FOND_IMAGE = "https://bulletincpmuehlgraben.github.io/calendrier-avent/images/fond.jpg";   // image de fond : adresse complète ou "images/fond.jpg" (dans GitHub). Vide = bleu nuit uni.
+  var FOND_VOILE = 0.35; // assombrit l'image pour garder les cases lisibles (0 = aucun voile, 0.6 = très sombre)
+  if (FOND_IMAGE){
+    var cal = document.getElementById("avent-cal");
+    var voile = "rgba(27,39,72,"+FOND_VOILE+")";
+    cal.style.backgroundImage = "linear-gradient("+voile+","+voile+"),url(\""+FOND_IMAGE+"\")";
+    cal.style.backgroundSize = "cover"; cal.style.backgroundPosition = "center";
+  }
   var PRIERE = "Seigneur Jésus, en ce temps de l'Avent, éclaire nos pas et ouvre nos cœurs. Merci pour notre Ange Gardien. Aide-nous à accomplir ce petit geste qui nous prépare à Ta venue. Amen.";
 
   /* ---------- CONTENUS : une entrée par date (AAAA-MM-JJ) ---------- */
