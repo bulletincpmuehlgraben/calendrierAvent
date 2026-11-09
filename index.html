@@ -48,11 +48,20 @@
 @media(max-width:680px){#avent-cal .cols{grid-template-columns:1fr}}
 
 
+
+#avent-cal .aide-btn{display:block;margin:0 auto 18px;padding:10px 22px;border-radius:999px;border:2px solid var(--or);background:rgba(44,58,99,.35);color:#fff;font-family:inherit;font-size:1rem;cursor:pointer;text-shadow:0 1px 3px rgba(0,0,0,.85);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#avent-cal .aide-btn:hover{background:rgba(240,185,63,.25)}
+#avent-cal .aide-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#avent-cal .aide h3{margin:18px 0 8px;font-size:1.35rem;color:#3a3a45}
+#avent-cal .aide h3:first-child{margin-top:8px}
+#avent-cal .aide ol{margin:0 0 14px;padding-left:1.4em;font-size:1.05rem}
+#avent-cal .aide li{margin-bottom:10px}
+#avent-cal .aide .note{background:#f6f1e3;border-left:4px solid var(--or);padding:10px 14px;border-radius:6px;font-size:.98rem}
 /* ===== IMAGE DE FOND (calque fixe : l'image reste en place quand on fait défiler, y compris sur iPhone) ===== */
 #avent-cal{position:relative;isolation:isolate}
 #avent-cal .fondwrap{position:absolute;inset:0;overflow:hidden;clip-path:inset(0);z-index:0;pointer-events:none;border-radius:inherit}
 #avent-cal .fondimg{position:fixed;top:0;left:0;width:100%;height:100vh;height:100dvh;background-size:cover;background-position:center;background-repeat:no-repeat}
-#avent-cal > h2,#avent-cal > .sous,#avent-cal > .grille{position:relative;z-index:1}
+#avent-cal > h2,#avent-cal > .sous,#avent-cal > .aide-btn,#avent-cal > .grille{position:relative;z-index:1}
 /* ===== OPTIMISATION TÉLÉPHONE ===== */
 @media(max-width:600px){
  #avent-cal{padding:20px 10px 28px;padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right));padding-bottom:max(28px,env(safe-area-inset-bottom))}
@@ -71,6 +80,8 @@
  #avent-cal .carte p{font-size:1rem}
  #avent-cal .cols{gap:16px}
  #avent-cal .fermer{padding:10px 16px;font-size:1rem}
+ #avent-cal .aide h3{font-size:1.2rem}
+ #avent-cal .aide ol,#avent-cal .aide .note{font-size:1rem}
 }
 @media(max-width:340px){
  #avent-cal .grille{grid-template-columns:repeat(4,1fr)}
@@ -82,12 +93,13 @@
 </style>
 <h2>En chemin vers Noël</h2>
 <p class="sous">Chaque case s'ouvre 3 jours avant sa date. Touchez une lumière pour découvrir le défi du jour.</p>
+<button type="button" class="aide-btn" id="avent-aide-btn">📖 Mode d'emploi</button>
 <div class="grille" id="avent-grille"></div>
 <div class="fond" id="avent-fond" role="dialog" aria-modal="true" aria-labelledby="avent-titre">
 <div class="carte">
 <button class="fermer" id="avent-fermer">Fermer</button>
 <p class="cat" id="avent-cat"></p>
-<div class="cols">
+<div class="cols" id="avent-cols">
 <div>
 <h3 id="avent-titre"></h3><p class="date" id="avent-date"></p>
 <p id="avent-texte"></p>
@@ -97,6 +109,19 @@
 </div>
 </div>
 <div><img id="avent-img" alt="" hidden><p id="avent-prierejour"></p></div>
+</div>
+<div class="aide" id="avent-aide" style="display:none">
+<h3>🪽 1. Fabrique ton Ange de Noël</h3>
+<p>Ton ange t'accompagnera gaiement durant tout l'Avent ! Il peut être en papier, en capsules de café, en tissu, en bois… Laisse libre cours à ton imagination.</p>
+<p>Pour t'inspirer, regarde les exemples et la vidéo présentés sur la page. Une fois fabriqué, installe-le dans un endroit bien en vue : il sera le témoin de tes petits défis.</p>
+<h3>🌟 2. Chaque jour, un défi à accomplir</h3>
+<ol>
+<li><strong>Ouvre la case du jour.</strong> Elle s'ouvre <span id="avent-aide-jours">3 jours</span> avant sa date et brille en doré. Une case en pointillés n'est pas encore disponible : patience !</li>
+<li><strong>Lis la prière d'introduction</strong>, puis découvre le défi du jour.</li>
+<li><strong>Accomplis la tâche</strong> décrite dans le défi : un petit geste, une attention, un service… avec ton ange à tes côtés.</li>
+<li><strong>Le soir, dis la courte prière du jour</strong> avec ton ange, en pensant à ce que tu as vécu.</li>
+</ol>
+<p class="note">💡 Tu peux rouvrir une case déjà vue pour relire le défi et la prière. Les cases à double contour sont les dimanches de l'Avent, des jours un peu spéciaux.</p>
 </div>
 </div>
 </div>
@@ -168,6 +193,8 @@ grille.appendChild(b);
 function ouvrir(dt,k){
 var c = CONTENU[k] || PAR_DEFAUT;
 function $(id){ return document.getElementById(id); }
+$("avent-cols").style.display = ""; $("avent-aide").style.display = "none";
+fond.setAttribute("aria-labelledby","avent-titre"); fond.querySelector(".carte").scrollTop = 0;
 $("avent-cat").textContent = c.cat || "Les Défis de l'Ange";
 $("avent-titre").textContent = c.t;
 $("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
@@ -182,8 +209,17 @@ marquer(k); construire();
 // compteur : une visite par case ouverte (si GoatCounter est installé, voir plus bas)
 try{ window.goatcounter && window.goatcounter.count({path:"avent-"+k, title:"Case "+k, event:true}); }catch(e){}
 }
+function ouvrirAide(){
+function $(id){ return document.getElementById(id); }
+$("avent-cat").textContent = "Mode d'emploi";
+$("avent-cols").style.display = "none"; $("avent-aide").style.display = "";
+$("avent-aide-jours").textContent = AVANCE_JOURS+" jour"+(AVANCE_JOURS>1?"s":"");
+fond.setAttribute("aria-labelledby","avent-cat"); fond.querySelector(".carte").scrollTop = 0;
+fond.classList.add("on"); $("avent-fermer").focus();
+}
 function fermer(){ fond.classList.remove("on"); }
 document.getElementById("avent-fermer").onclick = fermer;
+document.getElementById("avent-aide-btn").onclick = ouvrirAide;
 fond.onclick = function(e){ if(e.target===fond) fermer(); };
 document.addEventListener("keydown", function(e){ if(e.key==="Escape") fermer(); });
 /* ---------- LECTURE DU GOOGLE SHEET (CSV) ---------- */
