@@ -93,6 +93,7 @@
 }
 </style>
 <h2>En chemin vers Noël</h2>
+<h2>avec saint François</h2>
 <p class="sous">Chaque case s'ouvre 3 jours avant sa date. Touchez une lumière pour découvrir le défi du jour.</p>
 <button type="button" class="aide-btn" id="avent-aide-btn">📖 Mode d'emploi</button>
 <div class="grille" id="avent-grille"></div>
@@ -151,10 +152,7 @@ el.style.backgroundPosition = mob ? FOND_POSITION_MOBILE : FOND_POSITION;
 }
 appliquerFond();
 window.addEventListener("resize", appliquerFond);
-var PRIERE = "Seigneur Jésus, en ce temps de l'Avent, éclaire nos pas et ouvre nos cœurs. 
-Merci pour notre Ange Gardien.
-Aide-nous à accomplir ce petit geste qui nous prépare à Ta venue. 
-Amen.";
+var PRIERE = "Seigneur Jésus, en ce temps de l'Avent, éclaire nos pas et ouvre nos cœurs. Merci pour notre Ange Gardien. Aide-nous à accomplir ce petit geste qui nous prépare à Ta venue. Amen.";
 /* ---------- CONTENUS : une entrée par date (AAAA-MM-JJ) ---------- */
 /* Champs : cat = titre du haut (facultatif, "Les Défis de l'Ange" par défaut)
 t = titre du défi, x = texte du défi, p = prière du jour (sous l'image)
