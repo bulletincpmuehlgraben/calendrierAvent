@@ -58,11 +58,19 @@
 #avent-cal .aide li{margin-bottom:10px}
 #avent-cal .aide a{color:#8a66cf;font-weight:600;word-break:break-word}
 #avent-cal .aide .note{background:#f6f1e3;border-left:4px solid var(--or);padding:10px 14px;border-radius:6px;font-size:.98rem}
+/* ===== CHOIX DU PARCOURS (enfants / adultes) ===== */
+#avent-cal .parcours{display:flex;justify-content:center;margin:0 auto 14px}
+#avent-cal .pbtn{padding:10px 18px;border:2px solid var(--or);background:rgba(44,58,99,.35);color:#fff;font-family:inherit;font-size:1rem;cursor:pointer;text-shadow:0 1px 3px rgba(0,0,0,.85);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#avent-cal .pbtn:first-child{border-radius:999px 0 0 999px}
+#avent-cal .pbtn:last-child{border-radius:0 999px 999px 0;border-left-width:0}
+#avent-cal .pbtn.on{background:var(--or);color:var(--nuit);text-shadow:none;font-weight:bold}
+#avent-cal .pbtn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:600px){#avent-cal .pbtn{padding:9px 12px;font-size:.92rem}}
 /* ===== IMAGE DE FOND (calque fixe : l'image reste en place quand on fait défiler, y compris sur iPhone) ===== */
 #avent-cal{position:relative;isolation:isolate}
 #avent-cal .fondwrap{position:absolute;inset:0;overflow:hidden;clip-path:inset(0);z-index:0;pointer-events:none;border-radius:inherit}
 #avent-cal .fondimg{position:fixed;top:0;left:0;width:100%;height:100vh;height:100dvh;background-size:cover;background-position:center;background-repeat:no-repeat}
-#avent-cal > h2,#avent-cal > .sous,#avent-cal > .aide-btn,#avent-cal > .grille{position:relative;z-index:1}
+#avent-cal > h2,#avent-cal > .sous,#avent-cal > .aide-btn,#avent-cal > .parcours,#avent-cal > .grille{position:relative;z-index:1}
 /* ===== OPTIMISATION TÉLÉPHONE ===== */
 @media(max-width:600px){
  #avent-cal{padding:20px 10px 28px;padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right));padding-bottom:max(28px,env(safe-area-inset-bottom))}
@@ -95,6 +103,10 @@
 <h2>Les défis de l’Ange</h2>
 <h2>Sur les pas de saint François, en route vers Noël !</h2>
 <p class="sous">Chaque case s'ouvre 3 jours avant sa date. Touchez une lumière pour découvrir le défi du jour.</p>
+<div class="parcours" role="group" aria-label="Choisir le parcours">
+<button type="button" class="pbtn on" id="avent-p-enf" aria-pressed="true">🧒 Parcours enfants</button>
+<button type="button" class="pbtn" id="avent-p-adu" aria-pressed="false">🧑 Parcours adultes</button>
+</div>
 <button type="button" class="aide-btn" id="avent-aide-btn">📖 Mode d'emploi</button>
 <div class="grille" id="avent-grille"></div>
 <div class="fond" id="avent-fond" role="dialog" aria-modal="true" aria-labelledby="avent-titre">
@@ -153,6 +165,10 @@ el.style.backgroundPosition = mob ? FOND_POSITION_MOBILE : FOND_POSITION;
 appliquerFond();
 window.addEventListener("resize", appliquerFond);
 var PRIERE = "Seigneur Jésus,\nen ce temps de l’Avent, éclaire nos pas et prépare nos cœurs à ta venue.\nMerci pour notre petit Ange qui nous accompagne chaque jour et nous invite à relever de beaux défis.\nÀ la suite de saint François, apprends-nous à semer l’amour, la joie et la paix autour de nous.\nAide-nous à accomplir chaque jour un petit geste pour mieux t’accueillir à Noël.\nAmen.";
+/* ---------- PARCOURS ADULTE ---------- */
+var PRIERE_ADULTE = "Seigneur Jésus,\nen ce temps de l’Avent, éclaire nos pas et prépare nos cœurs à ta venue.\nÀ la suite de saint François, donne-nous la simplicité de te servir dans les petites choses de chaque jour.\nAide-nous à semer l’amour, la joie et la paix autour de nous.\nAmen.";
+var PAS_DE_CONTENU_ADULTE = "Le défi du parcours adultes sera bientôt ajouté.";
+var ADULTE = /[?&]parcours=adulte/.test(location.search); // enfants par défaut ; ?parcours=adulte ouvre directement le parcours adultes
 /* ---------- CONTENUS : une entrée par date (AAAA-MM-JJ) ---------- */
 /* Champs : cat = titre du haut (facultatif, "Les Défis de l'Ange" par défaut)
 t = titre du défi, x = texte du défi, p = prière du jour (sous l'image)
@@ -203,17 +219,17 @@ $("avent-cols").style.display = ""; $("avent-aide").style.display = "none";
 fond.setAttribute("aria-labelledby","avent-titre"); fond.querySelector(".carte").scrollTop = 0;
 $("avent-cat").textContent = c.cat || "Les Défis de l'Ange";
 $("avent-titre").textContent = c.t;
-$("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-$("avent-texte").textContent = c.x;
-$("avent-prie").textContent = PRIERE;
-$("avent-blocprie").style.display = c.sansPriere ? "none" : "";
-$("avent-prierejour").textContent = c.p || "";
-var im = $("avent-img");
-if (c.img){ im.src = c.img; im.alt = c.t; im.hidden = false; } else { im.hidden = true; }
+$("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}) + (ADULTE ? " · Parcours adultes" : "");
+$("avent-texte").textContent = ADULTE ? (c.ax || PAS_DE_CONTENU_ADULTE) : c.x;
+$("avent-prie").textContent = ADULTE ? PRIERE_ADULTE : PRIERE;
+$("avent-blocprie").style.display = (ADULTE ? c.asansPriere : c.sansPriere) ? "none" : "";
+$("avent-prierejour").textContent = (ADULTE ? c.ap : c.p) || "";
+var im = $("avent-img"), src = ADULTE ? c.aimg : c.img;
+if (src){ im.src = src; im.alt = c.t; im.hidden = false; } else { im.hidden = true; }
 fond.classList.add("on"); document.getElementById("avent-fermer").focus();
 marquer(k); construire();
 // compteur : une visite par case ouverte (si GoatCounter est installé, voir plus bas)
-try{ window.goatcounter && window.goatcounter.count({path:"avent-"+k, title:"Case "+k, event:true}); }catch(e){}
+try{ window.goatcounter && window.goatcounter.count({path:"avent-"+k+(ADULTE?"-adultes":""), title:"Case "+k+(ADULTE?" (adultes)":""), event:true}); }catch(e){}
 }
 function ouvrirAide(){
 function $(id){ return document.getElementById(id); }
@@ -226,6 +242,15 @@ fond.classList.add("on"); $("avent-fermer").focus();
 function fermer(){ fond.classList.remove("on"); }
 document.getElementById("avent-fermer").onclick = fermer;
 document.getElementById("avent-aide-btn").onclick = ouvrirAide;
+function choisirParcours(ad){
+ADULTE = ad;
+var e = document.getElementById("avent-p-enf"), a = document.getElementById("avent-p-adu");
+e.className = "pbtn" + (ad ? "" : " on"); a.className = "pbtn" + (ad ? " on" : "");
+e.setAttribute("aria-pressed", ad ? "false" : "true"); a.setAttribute("aria-pressed", ad ? "true" : "false");
+}
+document.getElementById("avent-p-enf").onclick = function(){ choisirParcours(false); };
+document.getElementById("avent-p-adu").onclick = function(){ choisirParcours(true); };
+choisirParcours(ADULTE);
 fond.onclick = function(e){ if(e.target===fond) fermer(); };
 document.addEventListener("keydown", function(e){ if(e.key==="Escape") fermer(); });
 /* ---------- LECTURE DU GOOGLE SHEET (CSV) ---------- */
@@ -254,7 +279,8 @@ var url = SHEET_URL; if (!/output=csv/.test(url)) url += (url.indexOf("?")<0 ? "
 fetch(url).then(function(r){ return r.text(); }).then(function(t){
 var nv={}, n=0;
 csv(t).forEach(function(r){ var k=dateIso(r[0]); if(!k) return; n++;
-nv[k]={cat:r[1], t:r[2], x:r[3], p:r[4], img:r[5], sansPriere:/^(oui|x|1|vrai|true)$/i.test((r[6]||"").trim())}; });
+nv[k]={cat:r[1], t:r[2], x:r[3], p:r[4], img:r[5], sansPriere:/^(oui|x|1|vrai|true)$/i.test((r[6]||"").trim()),
+ax:r[8], ap:r[9], aimg:r[10], asansPriere:/^(oui|x|1|vrai|true)$/i.test((r[11]||"").trim())}; });
 if (n){ CONTENU = nv; var ks = Object.keys(nv).sort(); DEBUT = ks[0]; FIN = ks[ks.length-1]; }
 }).catch(function(){ /* en cas d'échec, on garde les contenus intégrés */ }).then(construire);
 } else construire();
