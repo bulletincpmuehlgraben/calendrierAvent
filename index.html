@@ -118,28 +118,23 @@
 <h3 id="avent-titre"></h3><p class="date" id="avent-date"></p>
 <p id="avent-texte"></p>
 <div class="prie" id="avent-blocprie">
-<p>Prière d'Introduction Quotidienne</p>
+<p>🙏 Prière d'Introduction Quotidienne<br><em>(À lire chaque jour avant de découvrir le défi)</em></p>
 <p id="avent-prie"></p>
 </div>
 </div>
 <div><img id="avent-img" alt="" hidden><p id="avent-prierejour"></p></div>
 </div>
 <div class="aide" id="avent-aide" style="display:none">
-<h3>🔨 1. Fabrique ton Ange de Noël</h3>
-<p>Ton ange t'accompagnera gaiement durant tout l'Avent ! Il peut être en papier, en capsules de café, en tissu, en bois… Laisse libre cours à ton imagination.</p>
-<p>Pour t'inspirer, regarde les exemples et la vidéo présentés sur la page. </p>
-<p>https://www.youtube.com/watch?v=62ofgY34kJw</p>
-<p>Une fois fabriqué, installe-le dans un endroit bien en vue : il sera le témoin de tes petits défis.</p>
-<h3>🌟 2. Chaque jour, un défi à accomplir</h3>
+<h3>🗓️ Comment ça marche ?</h3>
 <ol>
-<li><strong>Ouvre la case du jour.</strong> Elle s'ouvre <span id="avent-aide-jours">3 jours</span> avant sa date et brille en doré. Une case en pointillés n'est pas encore disponible : patience !</li>
-<li><strong>Lis la prière d'introduction</strong>, puis découvre le défi du jour.</li>
-<li><strong>Accomplis la tâche</strong> décrite dans le défi : un petit geste, une attention, un service… avec ton ange à tes côtés.</li>
-<li><strong>Le soir, dis la courte prière du jour</strong> avec ton ange, en pensant à ce que tu as vécu.</li>
+<li><strong>Ouvrez la case du jour.</strong> Elle s'ouvre <span id="avent-aide-jours">3 jours</span> avant sa date et brille en doré. Une case en pointillés n'est pas encore disponible : patience !</li>
+<li><strong>Lisez la prière d'introduction</strong>, puis découvrez le défi du jour.</li>
+<li><strong>Relevez le défi</strong>, puis terminez la journée avec la prière du jour.</li>
 </ol>
-<h3>📸 3. Partage ton ange en action</h3>
-<p>Tu peux prendre une photo de ton ange en action pendant ton défi, puis l'envoyer par mail à <a href="mailto:viensvois.cpmuehlgraben@gmail.com?subject=Mon%20ange%20en%20action">viensvois.cpmuehlgraben@gmail.com</a> (pense à joindre la photo à ton message).</p>
-<p class="note">💡 Tu peux rouvrir une case déjà vue pour relire le défi et la prière. Les cases à double contour sont les dimanches de l'Avent, des jours un peu spéciaux.</p>
+<h3>🧒🧑 Deux parcours au choix</h3>
+<p><strong>Parcours enfants</strong> (affiché par défaut) : un petit défi par jour, simple à faire en famille, avec une prière courte. Les enfants peuvent <strong>fabriquer un ange qui les accompagnera</strong> tout l'Avent : en papier, en capsules de café, en tissu, en bois… Il suffit de laisser libre cours à son imagination ! Une fois fabriqué, on l'installe dans un endroit bien en vue : il sera le témoin des petits défis. Pour s'inspirer, voir la vidéo : <a href="https://www.youtube.com/watch?v=62ofgY34kJw" target="_blank" rel="noopener">regarder la vidéo</a>.</p>
+<p><strong>Parcours adultes</strong> (bouton « Parcours adultes » sous le titre) : même rendez-vous quotidien, avec un défi accompagné d'une explication et d'une prière adaptés aux adultes. Il n'y a pas d'ange à fabriquer.</p>
+<p class="note">📸 Envoyez une photo de l'ange en action à <a href="mailto:viensvois.cpmuehlgraben@gmail.com?subject=Mon%20ange%20en%20action">viensvois.cpmuehlgraben@gmail.com</a>.<br>💡 Vous pouvez rouvrir une case déjà vue. Les cases à double contour sont les dimanches de l'Avent.</p>
 </div>
 </div>
 </div>
@@ -148,7 +143,7 @@
 /* ---------- RÉGLAGES ---------- */
 var DEBUT = "2026-11-27", FIN = "2026-12-27"; // première et dernière case
 var AVANCE_JOURS = 3; // ouverture x jours avant la date
-var FOND_IMAGE = "https://bulletincpmuehlgraben.github.io/calendrierAvent/images/fond.jfif"; // image de fond : adresse complète ou "images/fond.jpg" (dans GitHub). Vide = bleu nuit uni.
+var FOND_IMAGE = "https://bulletincpmuehlgraben.github.io/calendrierAvent/images/fond.jpg"; // image de fond : adresse complète ou "images/fond.jpg" (dans GitHub). Vide = bleu nuit uni.
 var FOND_VOILE = 0.35; // assombrit l'image pour garder les cases lisibles (0 = aucun voile, 0.6 = très sombre)
 var FOND_IMAGE_MOBILE = ""; // (facultatif) version portrait de l'image pour téléphone, ex. "images/fond-mobile.jpg". Vide = on utilise FOND_IMAGE.
 var FOND_POSITION = "center center"; // zone de l'image conservée sur ordinateur
@@ -164,7 +159,7 @@ el.style.backgroundPosition = mob ? FOND_POSITION_MOBILE : FOND_POSITION;
 }
 appliquerFond();
 window.addEventListener("resize", appliquerFond);
-var PRIERE = "Seigneur Jésus,\nen ce temps de l’Avent, \néclaire nos pas et prépare nos cœurs à ta venue.\nMerci pour notre petit Ange qui nous accompagne chaque jour et nous invite à relever de beaux défis.\nÀ la suite de saint François, apprends-nous à semer l’amour, la joie et la paix autour de nous.\nAide-nous à accomplir chaque jour un petit geste pour mieux t’accueillir à Noël.\nAmen.";
+var PRIERE = "Seigneur Jésus,\nen ce temps de l’Avent, éclaire nos pas et prépare nos cœurs à ta venue.\nMerci pour notre petit Ange qui nous accompagne chaque jour et nous invite à relever de beaux défis.\nÀ la suite de saint François, apprends-nous à semer l’amour, la joie et la paix autour de nous.\nAide-nous à accomplir chaque jour un petit geste pour mieux t’accueillir à Noël.\nAmen.";
 /* ---------- PARCOURS ADULTE ---------- */
 var PRIERE_ADULTE = "Seigneur Jésus,\nen ce temps de l’Avent, éclaire nos pas et prépare nos cœurs à ta venue.\nÀ la suite de saint François, donne-nous la simplicité de te servir dans les petites choses de chaque jour.\nAide-nous à semer l’amour, la joie et la paix autour de nous.\nAmen.";
 var PAS_DE_CONTENU_ADULTE = "Le défi du parcours adultes sera bientôt ajouté.";
@@ -218,7 +213,7 @@ function $(id){ return document.getElementById(id); }
 $("avent-cols").style.display = ""; $("avent-aide").style.display = "none";
 fond.setAttribute("aria-labelledby","avent-titre"); fond.querySelector(".carte").scrollTop = 0;
 $("avent-cat").textContent = c.cat || "Les Défis de l'Ange";
-$("avent-titre").textContent = ADULTE ? (c.at || c.t) : c.t;
+$("avent-titre").textContent = c.t;
 $("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}) + (ADULTE ? " · Parcours adultes" : "");
 $("avent-texte").textContent = ADULTE ? (c.ax || PAS_DE_CONTENU_ADULTE) : c.x;
 $("avent-prie").textContent = ADULTE ? PRIERE_ADULTE : PRIERE;
@@ -280,16 +275,18 @@ fetch(url).then(function(r){ return r.text(); }).then(function(t){
 var nv={}, n=0;
 csv(t).forEach(function(r){ var k=dateIso(r[0]); if(!k) return; n++;
 nv[k]={cat:r[1], t:r[2], x:r[3], p:r[4], img:r[5], sansPriere:/^(oui|x|1|vrai|true)$/i.test((r[6]||"").trim()),
-at:r[8], ax:r[9], ap:r[10], aimg:r[11], asansPriere:/^(oui|x|1|vrai|true)$/i.test((r[12]||"").trim())}; });
+ax:r[8], ap:r[9], aimg:r[10], asansPriere:/^(oui|x|1|vrai|true)$/i.test((r[11]||"").trim())}; });
 if (n){ CONTENU = nv; var ks = Object.keys(nv).sort(); DEBUT = ks[0]; FIN = ks[ks.length-1]; }
 }).catch(function(){ /* en cas d'échec, on garde les contenus intégrés */ }).then(construire);
 } else construire();
 })();
 </script>
+</script>
 <!-- ===== COMPTEUR DE VISITES (GoatCounter, gratuit, sans cookie) =====
 1. Créez un compte sur goatcounter.com et choisissez un code (ex. muehlgraben).
 2. Remplacez VOTRECODE ci-dessous, puis retirez les balises de commentaire autour du script. -->
 <script data-goatcounter="https://bulletincpmuehlgraben.goatcounter.com/count"async src="//gc.zgo.at/count.js"></script>
+
 </div>
 </body>
 </html>
