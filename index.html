@@ -213,14 +213,15 @@ function $(id){ return document.getElementById(id); }
 $("avent-cols").style.display = ""; $("avent-aide").style.display = "none";
 fond.setAttribute("aria-labelledby","avent-titre"); fond.querySelector(".carte").scrollTop = 0;
 $("avent-cat").textContent = c.cat || "Les Défis de l'Ange";
-$("avent-titre").textContent = c.t;
+var titre = ADULTE ? (c.at || PAR_DEFAUT.t) : c.t;
+$("avent-titre").textContent = titre;
 $("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}) + (ADULTE ? " · Parcours adultes" : "");
 $("avent-texte").textContent = ADULTE ? (c.ax || PAS_DE_CONTENU_ADULTE) : c.x;
 $("avent-prie").textContent = ADULTE ? PRIERE_ADULTE : PRIERE;
 $("avent-blocprie").style.display = (ADULTE ? c.asansPriere : c.sansPriere) ? "none" : "";
 $("avent-prierejour").textContent = (ADULTE ? c.ap : c.p) || "";
 var im = $("avent-img"), src = ADULTE ? c.aimg : c.img;
-if (src){ im.src = src; im.alt = c.t; im.hidden = false; } else { im.hidden = true; }
+if (src){ im.src = src; im.alt = titre; im.hidden = false; } else { im.hidden = true; }
 fond.classList.add("on"); document.getElementById("avent-fermer").focus();
 marquer(k); construire();
 // compteur : une visite par case ouverte (si GoatCounter est installé, voir plus bas)
@@ -248,7 +249,12 @@ document.getElementById("avent-p-adu").onclick = function(){ choisirParcours(tru
 choisirParcours(ADULTE);
 fond.onclick = function(e){ if(e.target===fond) fermer(); };
 document.addEventListener("keydown", function(e){ if(e.key==="Escape") fermer(); });
-/* ---------- LECTURE DU GOOGLE SHEET (CSV) ---------- */
+/* ---------- LECTURE DU GOOGLE SHEET (CSV) ----------
+Colonnes : A date, B titre du haut (communes)
+C titre du défi, D texte, E prière, F image, G masquer la prière d'introduction (enfants)
+H prompt d'image (non utilisée)
+I titre du défi, J défi et explication, K prière, L image, M masquer la prière d'introduction (adultes)
+N prompt d'image (non utilisée) */
 function csv(t){
 var h=t.split(/\r?\n/)[0], sep=(h.split(";").length>h.split(",").length)?";":","; // ; ou , détecté sur la 1re ligne
 var r=[], l=[], c="", q=false;
@@ -275,7 +281,7 @@ fetch(url).then(function(r){ return r.text(); }).then(function(t){
 var nv={}, n=0;
 csv(t).forEach(function(r){ var k=dateIso(r[0]); if(!k) return; n++;
 nv[k]={cat:r[1], t:r[2], x:r[3], p:r[4], img:r[5], sansPriere:/^(oui|x|1|vrai|true)$/i.test((r[6]||"").trim()),
-ax:r[8], ap:r[9], aimg:r[10], asansPriere:/^(oui|x|1|vrai|true)$/i.test((r[11]||"").trim())}; });
+at:r[8], ax:r[9], ap:r[10], aimg:r[11], asansPriere:/^(oui|x|1|vrai|true)$/i.test((r[12]||"").trim())}; });
 if (n){ CONTENU = nv; var ks = Object.keys(nv).sort(); DEBUT = ks[0]; FIN = ks[ks.length-1]; }
 }).catch(function(){ /* en cas d'échec, on garde les contenus intégrés */ }).then(construire);
 } else construire();
