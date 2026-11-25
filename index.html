@@ -213,7 +213,7 @@ function $(id){ return document.getElementById(id); }
 $("avent-cols").style.display = ""; $("avent-aide").style.display = "none";
 fond.setAttribute("aria-labelledby","avent-titre"); fond.querySelector(".carte").scrollTop = 0;
 $("avent-cat").textContent = c.cat || "Les Défis de l'Ange";
-var titre = ADULTE ? (c.at || PAR_DEFAUT.t) : c.t;
+var titre = ADULTE ? (c.at || (c.ax ? c.t : PAR_DEFAUT.t)) : c.t; // titre adultes (I) ; à défaut, titre commun (C) si un défi adulte existe
 $("avent-titre").textContent = titre;
 $("avent-date").textContent = dt.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}) + (ADULTE ? " · Parcours adultes" : "");
 $("avent-texte").textContent = ADULTE ? (c.ax || PAS_DE_CONTENU_ADULTE) : c.x;
